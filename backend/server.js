@@ -6,31 +6,40 @@ const OpenAI = require("openai");
 dotenv.config();
 
 const app = express();
-const PORT = 3000;
 
+// Render provides PORT automatically.
+// 3000 is used when running locally.
+const PORT = process.env.PORT || 3000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Groq client
 const client = new OpenAI({
     apiKey: process.env.GROQ_API_KEY,
     baseURL: "https://api.groq.com/openai/v1"
 });
 
+// AI endpoint
 app.post("/api/ai", async (req, res) => {
     try {
         const { question } = req.body;
 
+        // Check if question exists
         if (!question || !question.trim()) {
             return res.status(400).json({
                 answer: "Please enter a question."
             });
         }
 
+        // Send question to Groq
         const response = await client.responses.create({
             model: "openai/gpt-oss-20b",
             input: question
         });
 
+        // Send AI response to frontend
         res.json({
             answer: response.output_text
         });
@@ -44,10 +53,12 @@ app.post("/api/ai", async (req, res) => {
     }
 });
 
+// Health-check / home route
 app.get("/", (req, res) => {
     res.send("StudyBuddy backend is running 🚀");
 });
 
-app.listen(PORT, () => {
-    console.log(`StudyBuddy backend running at http://localhost:${PORT}`);
+// Start server
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`StudyBuddy backend running on port ${PORT}`);
 });
