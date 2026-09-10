@@ -1162,7 +1162,7 @@ async function askAI() {
 
         const response =
             await fetch(
-                "http://localhost:3000/api/ai",
+                "https://studybuddy-1-helv.onrender.com/api/ai",
                 {
                     method: "POST",
 
