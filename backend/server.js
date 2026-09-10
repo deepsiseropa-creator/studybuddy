@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const OpenAI = require("openai");
+const path = require("path");
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "..", "frontend")));
 
 // Groq client
 const client = new OpenAI({
@@ -55,7 +57,7 @@ app.post("/api/ai", async (req, res) => {
 
 // Health-check / home route
 app.get("/", (req, res) => {
-    res.send("StudyBuddy backend is running 🚀");
+    res.sendFile(path.join(__dirname, "..", "frontend", "index.html"));
 });
 
 // Start server
